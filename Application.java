@@ -5,6 +5,7 @@
  * https://www.geeksforgeeks.org/graph-and-its-representations/
  */
 
+import java.awt.Color;
 import java.util.*;
 
 public class Application {
@@ -13,14 +14,15 @@ public class Application {
 	static ArrayList<Integer> check; // new
 	static ArrayList<Edge> edges; // for testing
 	static Scanner input;
-
+	
 	public static void main(String[] args) {
 		Random rand = new Random();
 		input = new Scanner(System.in);
 		System.out.print("Enter the number of Vertices: ");
 		numV = input.nextInt();
 		boolean hamiltonian = false;
-
+		Color color = null;
+		
 		while (numV > 50) {// check to make sure there's not too many vertices
 			System.out.println("Too many Vertices, dont break me. \nTry again: ");
 			numV = input.nextInt();
@@ -50,8 +52,8 @@ public class Application {
 					rNum = rand.nextInt(numV);
 				} // end while. Make sure we arent connecting the node to itself
 			} while (checkEdge(rNum, rNum2));// while loop checks if edge exists
-
-			edges.add(new Edge(rNum, rNum2)); // add our edge to edges so we can loop through edges in check edge
+			color=pickColor();
+			edges.add(new Edge(rNum, rNum2, color)); // add our edge to edges so we can loop through edges in check edge
 			addEdge(rNum, rNum2); // actually add the edge to the graph
 
 		} // end populate graph
@@ -88,6 +90,21 @@ public class Application {
 
 	}// end main
 
+	
+	static Color pickColor() {
+		Color color = null;
+		Random randColor = new Random();
+		switch(randColor.nextInt(3)) {
+		case 0: color = Color.BLUE;
+		break;
+		case 1: color= Color.RED;
+		break;
+		case 2: color = Color.BLACK;
+		break;
+		}
+		return color;
+	}
+	
 	static int smallestDegree() {
 		int[] tempArray = countEdges();
 
@@ -99,7 +116,6 @@ public class Application {
 				minVertex = i;
 			} // end if
 		} // end for
-
 		return minNum;
 	}
 
@@ -139,7 +155,30 @@ public class Application {
 		} // end for
 		return false;
 	}// end checkEdge
-
+	
+	public static String getColor(int v1, int v2) {
+		Color c = null;
+		String color= null;
+		
+		for (Edge e : edges) {
+			if (e.v1 == v1 && e.v2 == v2) {
+				c = e.getColor();
+			} else if(e.v1 == v2 && e.v2 == v1) {
+				c = e.getColor();
+			}//end else if
+		} // end for
+		
+		if(c == Color.RED) {
+			color = "Red";
+		} else if(c== Color.BLACK) {
+			color ="Black";
+		} else if(c==Color.BLUE) {
+			color = "Blue";
+		}
+		
+		
+		return color;
+	}
 	/**
 	 * @param v1
 	 * @param v2
@@ -153,7 +192,7 @@ public class Application {
 		for (int v = 0; v < numV; v++) {
 			System.out.println("Vertex " + v); // get our column
 			for (Integer n : graph[v]) {
-				System.out.print(" -> " + n); // each N is a node connected to the vertex V
+				System.out.print(" -> " + n + " is colored " + getColor(v,n)); // each N is a node connected to the vertex V
 			} // end inner for
 			System.out.println();
 		} // end for
@@ -184,10 +223,11 @@ public class Application {
 
 class Edge {
 	int v1, v2;
-
-	public Edge(int v1, int v2) {
+	Color color;
+	public Edge(int v1, int v2, Color color) {
 		this.v1 = v1;
 		this.v2 = v2;
+		this.color = color;
 	}// end constructor
 
 	public int getV1() {
@@ -197,6 +237,10 @@ class Edge {
 	public int getV2() {
 		return v2;
 	}// end get v2
+	
+	public Color getColor() {
+		return color;
+	}
 
 	public String toString() {
 		return v1 + " is connected to " + v2;
