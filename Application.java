@@ -9,7 +9,7 @@ import java.awt.Color;
 import java.util.*;
 
 public class Application {
-	static int numV, numE, minVertex, lastVertex;
+	static int numV, numE, minVertex, lastVertex, numOfEdges;
 	static LinkedList<Integer> graph[];
 	static ArrayList<Integer> check; // new
 	static ArrayList<Edge> edges; // for testing
@@ -20,14 +20,24 @@ public class Application {
 		input = new Scanner(System.in);
 		System.out.print("Enter the number of Vertices: ");
 		numV = input.nextInt();
-		boolean hamiltonian = false;
-		Color color = null;
+		
+		Color color = null; //set the color of the edge 
+		
 		
 		while (numV > 50) {// check to make sure there's not too many vertices
 			System.out.println("Too many Vertices, dont break me. \nTry again: ");
 			numV = input.nextInt();
 		} // end check
-
+		
+		System.out.print("Enter the number of Edges!"); 
+		numE = input.nextInt();
+		
+		while(numE > 50) {
+			System.out.println("Too many Edges, don't break me! \nTry again: "); 
+			numE = input.nextInt(); 
+		}// end of while 
+				
+		
 		graph = new LinkedList[numV]; // generate linkedList
 		check = new ArrayList<Integer>(); // used to check that we only visited each vertex once
 
@@ -38,10 +48,7 @@ public class Application {
 		edges = new ArrayList<Edge>(); // make edge array for check
 
 		int rNum, rNum2;
-		int maxEdges = ((numV - 1) * numV) / 2;
-		int minEdges = numV - 1;
-		numE = rand.nextInt(maxEdges - minEdges) + minEdges; // create random number of edges from numV-1 to a Complete
-
+		
 		for (int i = 0; i < numE; i++) { // loop numE times
 			do {// the while check if the edge already exists. Sometimes edges get duplicated it
 				// seems.
@@ -52,44 +59,30 @@ public class Application {
 					rNum = rand.nextInt(numV);
 				} // end while. Make sure we arent connecting the node to itself
 			} while (checkEdge(rNum, rNum2));// while loop checks if edge exists
-			color=pickColor();
-			edges.add(new Edge(rNum, rNum2, color)); // add our edge to edges so we can loop through edges in check edge
+			//color=pickColor();
+			edges.add(new Edge(rNum, rNum2, null)); // add our edge to edges so we can loop through edges in check edge
 			addEdge(rNum, rNum2); // actually add the edge to the graph
 
 		} // end populate graph
-		int minDeg = smallestDegree();
 
 		print();
 		System.out.println();
 
-		if (minDeg < 2) {
-			System.out.println("Not a hamiltonian graph! The degree of vertex " + minVertex + " is less than 2!");
-		} else {
-			for (int i = 0; i < numV; i++) { // Traverse the graph numV times
-				boolean visited[] = new boolean[numV];
-				check.clear();
-				System.out.println("Iteration " + i + "\n");
-				traverseGraph(i, visited);
-				if (check.size() > numV) {
-					System.out.println("Not a Hamiltonian graph! A Vertex was visited twice.");
-				} // end if
-				for (Integer n : graph[lastVertex]) {
-					if (n == i) {
-						hamiltonian = true;
-					} // end if
-				} // end inner for
-				if (hamiltonian) {
-					System.out.println("HAMILTONIAN");
-					break;
-				} // end if
-			} // end for
-			if (!hamiltonian) {
-				System.out.println("Not Hamiltonian");
-			}
-		} // end else
-
 	}// end main
 
+	static int largestDegree() {
+		int[] tempArray = countEdges();
+
+		int maxNum = -1;
+		int maxVertex = 500;
+		for (int i = 0; i <= tempArray.length - 1; i++) {
+			if (maxNum < tempArray[i]) {
+				maxNum = tempArray[i];
+				maxVertex = i;
+			} // end if
+		} // end for
+		return maxNum;
+	}
 	
 	static Color pickColor() {
 		Color color = null;
@@ -104,37 +97,19 @@ public class Application {
 		}
 		return color;
 	}
-	
-	static int smallestDegree() {
-		int[] tempArray = countEdges();
-
-		int minNum = 500;
-		minVertex = -1;
-		for (int i = 0; i <= tempArray.length - 1; i++) {
-			if (minNum > tempArray[i]) {
-				minNum = tempArray[i];
-				minVertex = i;
-			} // end if
-		} // end for
-		return minNum;
-	}
 
 	/*
 	 * Count Edges returns an array of the number of edges each vertex has.
 	 */
 	public static int[] countEdges() {
-
 		// array to hold numbers
 		int[] totalEdges = new int[numV];
-
 		// counts the number of edges for each vertex
 		for (int v = 0; v < numV; v++) {
-
 			int countEdges = 0;
 			for (Integer n : graph[v]) {
 				countEdges++;
 			} // end inner for
-
 			totalEdges[v] = countEdges;
 		} // end for
 
