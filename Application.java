@@ -59,8 +59,8 @@ public class Application {
 					rNum = rand.nextInt(numV);
 				} // end while. Make sure we arent connecting the node to itself
 			} while (checkEdge(rNum, rNum2));// while loop checks if edge exists
-			color=pickColor();
-			edges.add(new Edge(rNum, rNum2, color)); // add our edge to edges so we can loop through edges in check edge
+			//color=pickColor();
+			edges.add(new Edge(rNum, rNum2, null)); // add our edge to edges so we can loop through edges in check edge
 			addEdge(rNum, rNum2); // actually add the edge to the graph
 
 		} // end populate graph
@@ -68,14 +68,21 @@ public class Application {
 		print();
 		System.out.println();
 
-		for (int i = 0; i < numV; i++) { // Traverse the graph numV times
-			boolean visited[] = new boolean[numV];
-			check.clear();
-			System.out.println("Iteration " + i + "\n");
-			traverseGraph(i, visited);
-		}
 	}// end main
 
+	static int largestDegree() {
+		int[] tempArray = countEdges();
+
+		int maxNum = -1;
+		int maxVertex = 500;
+		for (int i = 0; i <= tempArray.length - 1; i++) {
+			if (maxNum < tempArray[i]) {
+				maxNum = tempArray[i];
+				maxVertex = i;
+			} // end if
+		} // end for
+		return maxNum;
+	}
 	
 	static Color pickColor() {
 		Color color = null;
@@ -95,18 +102,14 @@ public class Application {
 	 * Count Edges returns an array of the number of edges each vertex has.
 	 */
 	public static int[] countEdges() {
-
 		// array to hold numbers
 		int[] totalEdges = new int[numV];
-
 		// counts the number of edges for each vertex
 		for (int v = 0; v < numV; v++) {
-
 			int countEdges = 0;
 			for (Integer n : graph[v]) {
 				countEdges++;
 			} // end inner for
-
 			totalEdges[v] = countEdges;
 		} // end for
 
