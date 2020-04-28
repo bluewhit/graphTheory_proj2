@@ -21,23 +21,23 @@ public class Application {
 		System.out.print("Enter the number of Vertices: ");
 		numV = input.nextInt();
 		
+		Color color = null; //set the color of the edge 
+		
+		
 		while (numV > 50) {// check to make sure there's not too many vertices
 			System.out.println("Too many Vertices, dont break me. \nTry again: ");
 			numV = input.nextInt();
 		} // end check
 		
 		System.out.print("Enter the number of Edges!"); 
-		numOfEdges = input.nextInt();
+		numE = input.nextInt();
 		
-		while(numOfEdges > 50) {
+		while(numE > 50) {
 			System.out.println("Too many Edges, don't break me! \nTry again: "); 
-			numOfEdges = input.nextInt(); 
-		}
+			numE = input.nextInt(); 
+		}// end of while 
 				
-		Color color = null;
 		
-		
-
 		graph = new LinkedList[numV]; // generate linkedList
 		check = new ArrayList<Integer>(); // used to check that we only visited each vertex once
 
@@ -48,10 +48,7 @@ public class Application {
 		edges = new ArrayList<Edge>(); // make edge array for check
 
 		int rNum, rNum2;
-		int maxEdges = ((numV - 1) * numV) / 2;
-		int minEdges = numV - 1;
-		numE = rand.nextInt(maxEdges - minEdges) + minEdges; // create random number of edges from numV-1 to a Complete
-
+		
 		for (int i = 0; i < numE; i++) { // loop numE times
 			do {// the while check if the edge already exists. Sometimes edges get duplicated it
 				// seems.
