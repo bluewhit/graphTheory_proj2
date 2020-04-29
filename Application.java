@@ -84,6 +84,25 @@ public class Application {
 		return maxNum;
 	}
 	
+	
+	//check to see if we can add a color to the specific edge 
+	static boolean checkColor(int v, String color) {
+		
+		//get the vertex, check which vertex it's attached to 
+		for (Integer n : graph[v]) {
+			
+			String currentColor = getColor(v,n); // set the edge's color to currentColor
+			
+			//if the color we are trying to give the edge equals any of the colors, then we return false. 
+			if(color == currentColor) {
+				return false;  
+			}//end if 
+			
+		}//end for 
+		
+		return true; 
+	}
+	
 	static Color pickColor() {
 		Color color = null;
 		Random randColor = new Random();
@@ -142,6 +161,7 @@ public class Application {
 				c = e.getColor();
 			}//end else if
 		} // end for
+		
 		
 		if(c == Color.RED) {
 			color = "Red";
