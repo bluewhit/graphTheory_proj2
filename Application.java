@@ -99,7 +99,6 @@ public class Application {
 			}//end if 
 			
 		}//end for 
-		
 		return true; 
 	}
 	
@@ -202,13 +201,39 @@ public class Application {
 		visit[v] = true;
 		check.add(v); //add vertex to check
 		System.out.print(v + " -> ");
-
+		
+		//pick a color
+		String color = pickColor();
+		int colorCount = 50; 
+		
+		//while the color does not equal another color at the vertex
+		while(!checkColor(v,color) && colorCount < 50) {
+			color = pickColor(); 
+			colorCount++; 
+		}//end while loop 
+		
+		
+		//loops thru the vertices of vertex v  
+		for (Integer n : graph[v]) {
+			
+			//loops thru the edges 
+			for(Edge e: edges) {
+				
+				//if the vertex of v1 and v2 is equal to our current edge, set the color 
+				if(e.v1 == v && e.v2 == n) {
+					e.setColor(color);
+				}
+			}
+		}
+		
+		
 		// Recur for all the vertices adjacent to this vertex
 		Iterator<Integer> i = graph[v].listIterator();
 		lastVertex = v;
 		while (i.hasNext()) {
 			int n = i.next();
 			if (!visit[n])
+				
 				traverseGraph(n, visit);
 		}
 	}// end traverseGraph
