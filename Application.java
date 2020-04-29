@@ -66,7 +66,8 @@ public class Application {
 
 		print();
 		System.out.println();
-
+		boolean visited[] = new boolean[numV];
+		traverseGraph(0, visited);
 	}// end main
 
 	static int largestDegree() {
@@ -168,7 +169,7 @@ public class Application {
 	 */
 	public static void addEdge(int v1, int v2) { // add edge to the graph
 		graph[v1].add(v2); // at vertex 1 add an edge to vertex 2
-		graph[v2].add(v1); // since its unweighted, also add an edge from vertex 2, to vertex 1
+		//graph[v2].add(v1); // since its unweighted, also add an edge from vertex 2, to vertex 1
 	}// end add edge
 
 	public static void print() { // print our graph
@@ -193,7 +194,7 @@ public class Application {
 		
 		//pick a color
 		String color = pickColor();
-		int colorCount = 50; 
+		int colorCount = 0; 
 		
 		//while the color does not equal another color at the vertex
 		while(!checkColor(v,color) && colorCount < 50) {
@@ -207,7 +208,6 @@ public class Application {
 			
 			//loops thru the edges 
 			for(Edge e: edges) {
-				
 				//if the vertex of v1 and v2 is equal to our current edge, set the color 
 				if(e.v1 == v && e.v2 == n) {
 					e.setColor(color);
