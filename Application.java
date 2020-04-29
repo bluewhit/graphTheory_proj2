@@ -1,6 +1,5 @@
 /*
  * @author Alexander Kline and Whitney Trovinger
- *
  * https://www.youtube.com/watch?time_continue=1&v=zVrPdF7f4-I&feature=emb_logo
  * https://www.geeksforgeeks.org/graph-and-its-representations/
  */
@@ -21,7 +20,7 @@ public class Application {
 		System.out.print("Enter the number of Vertices: ");
 		numV = input.nextInt();
 		
-		Color color = null; //set the color of the edge 
+		String color = null; //set the color of the edge 
 		
 		
 		while (numV > 50) {// check to make sure there's not too many vertices
@@ -103,15 +102,15 @@ public class Application {
 		return true; 
 	}
 	
-	static Color pickColor() {
-		Color color = null;
+	static String pickColor() {
+		String color = null;
 		Random randColor = new Random();
 		switch(randColor.nextInt(3)) {
-		case 0: color = Color.BLUE;
+		case 0: color = "Blue";
 		break;
-		case 1: color= Color.RED;
+		case 1: color= "Red";
 		break;
-		case 2: color = Color.BLACK;
+		case 2: color = "Black";
 		break;
 		}
 		return color;
@@ -151,26 +150,16 @@ public class Application {
 	}// end checkEdge
 	
 	public static String getColor(int v1, int v2) {
-		Color c = null;
+		String c = null;
 		String color= null;
 		
 		for (Edge e : edges) {
 			if (e.v1 == v1 && e.v2 == v2) {
-				c = e.getColor();
+				color = e.getColor();
 			} else if(e.v1 == v2 && e.v2 == v1) {
-				c = e.getColor();
+				color = e.getColor();
 			}//end else if
-		} // end for
-		
-		
-		if(c == Color.RED) {
-			color = "Red";
-		} else if(c== Color.BLACK) {
-			color ="Black";
-		} else if(c==Color.BLUE) {
-			color = "Blue";
-		}
-		
+		} // end for	
 		
 		return color;
 	}
@@ -218,8 +207,8 @@ public class Application {
 
 class Edge {
 	int v1, v2;
-	Color color;
-	public Edge(int v1, int v2, Color color) {
+	String color;
+	public Edge(int v1, int v2, String color) {
 		this.v1 = v1;
 		this.v2 = v2;
 		this.color = color;
@@ -233,8 +222,12 @@ class Edge {
 		return v2;
 	}// end get v2
 	
-	public Color getColor() {
+	public String getColor() {
 		return color;
+	}
+
+	public void setColor(String color) {
+		this.color = color;
 	}
 
 	public String toString() {
