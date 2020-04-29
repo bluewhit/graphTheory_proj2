@@ -15,13 +15,9 @@ public class Application {
 	static Scanner input;
 	
 	public static void main(String[] args) {
-		Random rand = new Random();
 		input = new Scanner(System.in);
 		System.out.print("Enter the number of Vertices: ");
 		numV = input.nextInt();
-		
-		String color = null; //set the color of the edge 
-		
 		
 		while (numV > 50) {// check to make sure there's not too many vertices
 			System.out.println("Too many Vertices, dont break me. \nTry again: ");
@@ -44,9 +40,18 @@ public class Application {
 			graph[v] = new LinkedList<>();
 		} // end for
 
-		edges = new ArrayList<Edge>(); // make edge array for check
-
+		createGraph();
+		boolean visited[] = new boolean[numV];
+		traverseGraph(0, visited);
+		System.out.println();
+		print();
+	}// end main
+	
+	static void createGraph() {
 		int rNum, rNum2;
+		Random rand = new Random();
+		
+		edges = new ArrayList<Edge>(); // make edge array for check
 		
 		for (int i = 0; i < numE; i++) { // loop numE times
 			do {// the while check if the edge already exists. Sometimes edges get duplicated it
@@ -62,13 +67,9 @@ public class Application {
 			edges.add(new Edge(rNum, rNum2, null)); // add our edge to edges so we can loop through edges in check edge
 			addEdge(rNum, rNum2); // actually add the edge to the graph
 
-		} // end populate graph
-
-		print();
-		System.out.println();
-
-	}// end main
-
+		} // end for loop to populate graph
+	}//end create graph
+	
 	static int largestDegree() {
 		int[] tempArray = countEdges();
 
@@ -89,7 +90,6 @@ public class Application {
 		
 		//get the vertex, check which vertex it's attached to 
 		for (Integer n : graph[v]) {
-			
 			String currentColor = getColor(v,n); // set the edge's color to currentColor
 			
 			//if the color we are trying to give the edge equals any of the colors, then we return false. 
@@ -98,7 +98,6 @@ public class Application {
 			}//end if 
 			
 		}//end for 
-		
 		return true; 
 	}
 	
@@ -150,7 +149,6 @@ public class Application {
 	}// end checkEdge
 	
 	public static String getColor(int v1, int v2) {
-		String c = null;
 		String color= null;
 		
 		for (Edge e : edges) {
@@ -180,8 +178,8 @@ public class Application {
 			} // end inner for
 			System.out.println();
 		} // end for
-	}// end print
-
+	}// end print	
+	
 	/*
 	 * traverse the graph recursively code for search found here:
 	 * https://www.geeksforgeeks.org/depth-first-search-or-dfs-for-a-graph/
@@ -191,13 +189,36 @@ public class Application {
 		visit[v] = true;
 		check.add(v); //add vertex to check
 		System.out.print(v + " -> ");
-
+		
+		//pick a color
+		String color = pickColor();
+		int colorCount = 0; 
+		
+		//while the color does not equal another color at the vertex
+		while(!checkColor(v,color) && colorCount < 50) {
+			color = pickColor(); 
+			colorCount++; 
+		}//end while loop 
+		
+		//loops thru the vertices of vertex v  
+		for (Integer n : graph[v]) {
+			
+			//loops thru the edges 
+			for(Edge e: edges) {
+				//if the vertex of v1 and v2 is equal to our current edge, set the color 
+				if(e.v1 == v && e.v2 == n || e.v2==v && e.v1== n) {
+					e.setColor(color);
+				}
+			}
+		}
+		
 		// Recur for all the vertices adjacent to this vertex
 		Iterator<Integer> i = graph[v].listIterator();
 		lastVertex = v;
 		while (i.hasNext()) {
 			int n = i.next();
 			if (!visit[n])
+				
 				traverseGraph(n, visit);
 		}
 	}// end traverseGraph
