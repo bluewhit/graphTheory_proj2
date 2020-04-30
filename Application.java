@@ -33,7 +33,7 @@ public class Application {
 				
 
 		if(numV%2==0 && (numE==numV*(numV-1)/2)) { //if the graph is K-complete and even, it should take n-1 colors
-			numColors=numV-1;
+			numColors=numV-1;//numColors is used in pickColors
 		}else if(numV%2==1 &&(numE==numV*(numV-1)/2)) {//if its K-complete and odd, it should take n colors
 			numColors=numV;
 		}else {
@@ -58,6 +58,7 @@ public class Application {
 		
 		boolean visited[] = new boolean[numV];
 		traverseGraph(0,visited);
+		
 		colorGraph();
 		
 		print();
@@ -102,7 +103,7 @@ public class Application {
 		graph[v2].add(v1); // since its unweighted, also add an edge from vertex 2, to vertex 1
 	}// end add edge
 	
-	public static int largestDegree() {
+	public static int largestDegree() {//redid largest degree to not need countEdges method
 		int largest=0;
 		for(int i=0;i<numV;i++){
 			int count =0;
@@ -136,7 +137,6 @@ public class Application {
 		while (i.hasNext()) {
 			int n = i.next();
 			if (!visit[n])
-				
 				traverseGraph(n, visit);
 		}//end while
 	}// end traverseGraph
@@ -174,7 +174,7 @@ public class Application {
 			}//end while
 		}
 	*/	
-		switch(c) {
+		switch(c) { //added more colors
 		case 0: color = "Blue";
 		break;
 		case 1: color = "Red";
@@ -199,7 +199,8 @@ public class Application {
 		return color;
 	}//end pickColor
 	
-	static boolean checkColor(int v, String color) {
+	static boolean checkColor(int v, String color) { //tried to see if i can make check colors work better, idk if it does
+		/*
 		for(Edge e: edges) {
 			if(e.v1==v) {
 				if(color==e.getColor()) {
@@ -212,7 +213,7 @@ public class Application {
 			}
 		}//end for edges
 		
-		/*
+		*/
 		for (Integer n : graph[v]) {
 			//currentColor = getColor(v,n); // set the edge's color to currentColor
 			//if the color we are trying to give the edge equals any of the colors, then we return false. 
@@ -220,7 +221,7 @@ public class Application {
 				return false;  
 			}//end if 
 		} //end for 
-		*/
+		
 		return true; 
 	}//end checkColor
 	
@@ -262,9 +263,11 @@ public class Application {
 		String color= null;
 		
 		for (Edge e : edges) {
-			if (e.v1 == v1 && e.v2 == v2 || e.v1 == v2 && e.v2 == v1) {
+			if (e.v1 == v1 && e.v2 == v2) {
 				color = e.getColor();
-			}//end if
+			}else if( e.v1 == v2 && e.v2 == v1) {
+				color = e.getColor();
+			}
 		} // end for	
 		return color;
 	}
