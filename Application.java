@@ -31,14 +31,6 @@ public class Application {
 		}// end of while 
 				
 
-		if(numV%2==0 && (numE==numV*(numV-1)/2)) { //if the graph is K-complete and even, it should take n-1 colors
-			numColors=numV-1;//numColors is used in pickColors
-		}else if(numV%2==1 &&(numE==numV*(numV-1)/2)) {//if its K-complete and odd, it should take n colors
-			numColors=numV;
-		}else {
-			numColors=largestDegree(); //most the time the maximum degree should be the amount of colors
-		}//set number of colors to be used
-
 		graph = new LinkedList[numV]; // generate linkedList
 		check = new ArrayList<Integer>(); // used to check that we only visited each vertex once
 
@@ -48,9 +40,17 @@ public class Application {
 		
 		createGraph();
 		
+		if(numV%2==0 && (numE==numV*(numV-1)/2)) { //if the graph is K-complete and even, it should take n-1 colors
+			numColors=numV-1;//numColors is used in pickColors
+		}else if(numV%2==1 &&(numE==numV*(numV-1)/2)) {//if its K-complete and odd, it should take n colors
+			numColors=numV;
+		}else {
+			numColors=largestDegree(); //most the time the maximum degree should be the amount of colors
+		}//set number of colors to be used
+		
 		boolean visited[] = new boolean[numV];
 		traverseGraph(0,visited);
-		
+		System.out.println("Done Traversing, Coloring\n");
 		colorGraph();
 		
 		print();
@@ -75,6 +75,7 @@ public class Application {
 			} while (checkEdge(rNum, rNum2));// while loop checks if edge exists
 			//color=pickColor();
 			edges.add(new Edge(rNum, rNum2, null)); // add our edge to edges so we can loop through edges in check edge
+			edges.add(new Edge(rNum2, rNum, null));
 			addEdge(rNum, rNum2); // actually add the edge to the graph
 
 		} // end for loop to populate graph
@@ -109,7 +110,6 @@ public class Application {
 				largest = count;
 			}//end if
 		}//end i for
-		
 		return largest;
 	}//end largest
 	
@@ -138,13 +138,14 @@ public class Application {
 		for(int i=0; i<numV; i++) {
 			for(Integer j: graph[i]) {
 				if(checkEdge(i,j)) {
-					if(getColor(i,j)==null) { //only color if not already, this seems to work better than without. 
+					if(getColor(i,j)==null) { //only color if not already, loops infinitely without 
 						color=pickColor();
 						reset=0;
 						while(!checkColor(i,j, color)) {
 							color=pickColor();
 							reset++;
-							if(reset>1000000) {
+							if(reset>200000*numV) {//if we've looped a million times, reset colors to null and try again
+								System.out.println("Reset\n");
 								reset();
 								break;
 							}
@@ -181,12 +182,42 @@ public class Application {
 		break;
 		case 9: color = "White";
 		break;
+		case 10: color = "Grey";
+		break;
+		case 11: color = "Violet";
+		break;
+		case 12: color = "Cyan";
+		break;
+		case 13: color = "Magenta";
+		break;
+		case 14: color = "Scarlet";
+		break;
+		case 15: color = "Indigo";
+		break;
+		case 16: color = "Cerulean";
+		break;
+		case 17: color = "Bitter Lemon";
+		break;
+		case 18: color = "Blond";
+		break;
+		case 19: color = "Quartz";
+		break;
+		case 20: color = "Rose Gold";
+		break;
+		case 21: color = "Gold";
+		break;
+		case 22: color = "Silver";
+		break;
+		case 23: color = "Orchid";
+		break;
+		case 24: color = "Burgandy";
+		break;
 		}
 		return color;
 	}//end pickColor
 	
 	static boolean checkColor(int v,int v2, String color) { //tried to see if i can make check colors work better, idk if it does
-
+		
 		for (Integer n : graph[v]) {
 			//currentColor = getColor(v,n); // set the edge's color to currentColor
 			//if the color we are trying to give the edge equals any of the colors, then we return false. 
@@ -197,7 +228,9 @@ public class Application {
 				return false;
 			}//end if
 		} //end for n
+		
 		for(Integer i: graph[v2]) { //check if the other node has that color already
+			//we dont want to use orange if our other node has orange on it already, i think(it seems to work)
 			if(color==getColor(v2,i)) {
 				return false;
 			}//end if
@@ -205,6 +238,20 @@ public class Application {
 				return false;
 			}
 		}//end for i
+		
+		for(Edge e : edges) {
+			if(v==e.v1 || v==e.v2) {
+				if(color==e.getColor()) {
+					return false;
+				}//end color if
+			}//end v1 if
+			if(v2==e.v1 || v2==e.v2) {
+				if(color==e.getColor()) {
+					return false;
+				}//end color if
+			}//end v2 if
+		}//end for
+		
 		return true;
 	}//end checkColor
 	
@@ -244,9 +291,8 @@ public class Application {
 	static void reset() {
 		for(int i=0; i<numV; i++) {
 			for(Integer n: graph[i]) {
-				if(checkEdge(i,n)) {
-					setColor(i,n,null);
-				}//end checkedge if
+				setColor(i,n,null);
+				setColor(n,i,null);//just making sure its all resetting, worst case scenario it replaces null with null
 			}//end int n for
 		}//end for i
 		colorGraph();
