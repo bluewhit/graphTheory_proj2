@@ -5,12 +5,11 @@
  */
 import java.util.*;
 public class Application {
-	static int numV, numE, minVertex, lastVertex, numColors;
+	static int numV, numE, minVertex, lastVertex, numColors, reset;
 	static LinkedList<Integer> graph[];
 	static ArrayList<Integer> check; // new
 	static ArrayList<Edge> edges; // for testing
 	static Scanner input;
-	static int[] colors;
 	
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
@@ -40,19 +39,12 @@ public class Application {
 			numColors=largestDegree(); //most the time the maximum degree should be the amount of colors
 		}//set number of colors to be used
 
-		colors = new int[numColors];//used to help check colors to prevent wrong colorings
-		//when n is odd, n colors are needed: each color can only be used for (n-1)/2 edges
-		//this colors array holds how many times we've used a color, is created dynamically
 		graph = new LinkedList[numV]; // generate linkedList
 		check = new ArrayList<Integer>(); // used to check that we only visited each vertex once
 
 		for (int v = 0; v < numV; v++) {
 			graph[v] = new LinkedList<>();
 		} // end for
-		
-		for(int i = 0; i<numColors;i++) {
-			colors[i]=0;
-		}
 		
 		createGraph();
 		
@@ -148,8 +140,14 @@ public class Application {
 				if(checkEdge(i,j)) {
 					if(getColor(i,j)==null) { //only color if not already, this seems to work better than without. 
 						color=pickColor();
-						while(!checkColor(i, color)) {
+						reset=0;
+						while(!checkColor(i,j, color)) {
 							color=pickColor();
+							reset++;
+							if(reset>1000000) {
+								reset();
+								break;
+							}
 						}//end while
 						setColor(i,j,color);						
 					}//end color==null
@@ -161,20 +159,8 @@ public class Application {
 	static String pickColor() {
 		String color = null;
 		Random randColor = new Random();
-		boolean canUse =false;
-		int c = randColor.nextInt(numColors);
-	/*	supposed to check if a color has been used too many times	
-		if(numV%2==1 &&(numE==numV*(numV-1)/2)) {
-			while(!canUse) {
-				if(colors[c]>=((numV-1)/2)) {
-					c=randColor.nextInt(numColors);
-				}else{
-					canUse=true;
-				}
-			}//end while
-		}
-	*/	
-		switch(c) { //added more colors
+
+		switch(randColor.nextInt(numColors)) { //added more colors
 		case 0: color = "Blue";
 		break;
 		case 1: color = "Red";
@@ -199,64 +185,37 @@ public class Application {
 		return color;
 	}//end pickColor
 	
-	static boolean checkColor(int v, String color) { //tried to see if i can make check colors work better, idk if it does
-		/*
-		for(Edge e: edges) {
-			if(e.v1==v) {
-				if(color==e.getColor()) {
-					return false;
-				}//end if
-			}else if(e.v2==v) {
-				if(color==e.getColor()) {
-					return false;
-				}//end if
-			}
-		}//end for edges
-		
-		*/
+	static boolean checkColor(int v,int v2, String color) { //tried to see if i can make check colors work better, idk if it does
+
 		for (Integer n : graph[v]) {
 			//currentColor = getColor(v,n); // set the edge's color to currentColor
 			//if the color we are trying to give the edge equals any of the colors, then we return false. 
 			if(color == getColor(v,n)) {
 				return false;  
 			}//end if 
-		} //end for 
-		
-		return true; 
+			if(color==getColor(n,v)) {
+				return false;
+			}//end if
+		} //end for n
+		for(Integer i: graph[v2]) { //check if the other node has that color already
+			if(color==getColor(v2,i)) {
+				return false;
+			}//end if
+			if(color==getColor(i,v2)) {
+				return false;
+			}
+		}//end for i
+		return true;
 	}//end checkColor
 	
 	public static void setColor(int v1, int v2, String color) {
-		int c=0;
 		for (Edge e : edges) {
 			if (e.v1 == v1 && e.v2 == v2) {
 				e.setColor(color);
 			}else if(e.v1 == v2 && e.v2 == v1) {//end if
 				e.setColor(color);
-			}
+			}//end set color
 		} // end for
-		switch(color) {
-		case "Blue": c = 0;
-		break;
-		case "Red": c = 1;
-		break;
-		case "Black": c = 2;
-		break;
-		case "Green": c = 3;
-		break;
-		case "Orange": c = 4;
-		break;
-		case "Pink": c = 5;
-		break;
-		case "Purple": c = 6;
-		break;
-		case "Yellow": c = 7;
-		break;
-		case "Brown": c = 8;
-		break;
-		case "White": c = 9;
-		break;
-		}
-		colors[c]= colors[c] +1;
 	}//end setColor
 	
 	public static String getColor(int v1, int v2) {
@@ -281,6 +240,17 @@ public class Application {
 			System.out.println();
 		} // end for
 	}// end print	
+	
+	static void reset() {
+		for(int i=0; i<numV; i++) {
+			for(Integer n: graph[i]) {
+				if(checkEdge(i,n)) {
+					setColor(i,n,null);
+				}//end checkedge if
+			}//end int n for
+		}//end for i
+		colorGraph();
+	}//end reset
 	
 }//end class
 
