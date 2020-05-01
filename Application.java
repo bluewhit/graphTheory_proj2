@@ -238,7 +238,8 @@ public class Application {
 				return false;
 			}
 		}//end for i
-		
+		//i know this extra check is probably pointless and does the same thing as the others, i just am not sure how to make it check correctly
+		//i've seen some other colorings that use back tracking and i feel like we're gonna have to do something similar.
 		for(Edge e : edges) {
 			if(v==e.v1 || v==e.v2) {
 				if(color==e.getColor()) {
